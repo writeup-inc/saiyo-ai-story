@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Codeで採用を自動化しまくった結果、就活生と共通の友人がいることが判明し激アツすぎた話</title>
+<meta name="description" content="正直、無理だと思ってた。採用の「書く仕事」を100日かけてAIに渡していったら、浮いた時間で面接を深掘りしたら、就活生と共通の友人がいることが分かった話です。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* 緑1色＋白＋黒 */
+:root{
+  --accent:#0a6b4f;
+  --ink:#111111;
+  --ink-2:#555555;
+  --ink-3:#9a9a9a;
+  --line:#e6e6e6;
+  --paper:#ffffff;
+  --paper-2:#f6f6f4;
+  --en:"Inter","Noto Sans JP",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans JP",sans-serif;font-size:16.5px;line-height:2.05;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:1150px;margin:0 auto;padding:0 24px}
+@media (max-width:520px){.wrap{padding:0 16px}body{font-size:16px}}
+.ac{color:var(--accent)}
+.en{font-family:var(--en)}
+.mk{background:linear-gradient(transparent 62%,#d4ebe3 62%);font-weight:700}
+
+.hd{border-bottom:1px solid var(--line)}
+.hd .wrap{display:flex;align-items:center;height:56px}
+.logo{font-size:14px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+.logo i{width:14px;height:14px;border:3px solid var(--accent);border-radius:50%}
+
+/* ===== タイトル ===== */
+.top{padding:96px 0 72px}
+.cat{display:inline-block;font-size:12px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:2px 12px;margin-bottom:28px}
+.top h1{font-size:clamp(28px,4.8vw,60px);line-height:1.28;font-weight:900;letter-spacing:-.02em;margin:0 0 28px}
+.top h1 .day{font-family:var(--en);font-weight:900}
+.subt{font-size:clamp(16px,2vw,19px);font-weight:700;color:var(--ink-2);margin:-8px 0 28px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:13px;color:var(--ink-3)}
+.track{margin-top:64px;position:relative;height:72px}
+.track::before{content:"";position:absolute;left:0;right:0;top:20px;height:2px;background:var(--accent)}
+.track .pt{position:absolute;top:8px;transform:translateX(-50%);text-align:center}
+.track .pt i{display:block;width:26px;height:26px;border:5px solid var(--accent);border-radius:50%;background:var(--paper);margin:0 auto 8px}
+.track .pt b{font-family:var(--en);font-size:12px;font-weight:700;white-space:nowrap}
+.track .pt.end i{width:40px;height:40px;margin-top:-7px;border-width:7px}
+.track .pt:first-child{transform:none;text-align:left}
+.track .pt:first-child i{margin-left:0}
+.track .pt.end{transform:translateX(-100%);text-align:right}
+.track .pt.end i{margin-right:0}
+
+/* ===== 本文 ===== */
+.article{border-top:1px solid var(--line);padding:88px 0 40px}
+.two{display:grid;grid-template-columns:240px 1fr;gap:72px}
+@media (max-width:860px){.two{grid-template-columns:1fr;gap:0}.toc{display:none}}
+.toc{position:sticky;top:40px;align-self:start;font-size:13.5px}
+.toc p{font-family:var(--en);font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--ink-3);margin:0 0 16px}
+.toc ol{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.toc li a{display:block;padding:7px 0 7px 18px;margin-left:-2px;border-left:2px solid transparent;color:var(--ink-2);text-decoration:none;line-height:1.5}
+.toc li a b{font-family:var(--en);display:block;font-size:12px;color:var(--ink-3)}
+.toc li a.on{border-left-color:var(--accent);color:var(--ink)}
+.toc li a.on b{color:var(--accent)}
+
+.post{max-width:700px}
+.post p{margin:0 0 1.5em}
+.lead{font-size:18px;line-height:2.1}
+
+.chap{margin:120px 0 0;scroll-margin-top:32px}
+.chap:first-of-type{margin-top:72px}
+.dayno{font-family:var(--en);font-weight:900;font-size:clamp(56px,8vw,96px);line-height:1;letter-spacing:-.04em;color:var(--accent);display:flex;align-items:baseline;gap:12px}
+.dayno small{font-size:14px;letter-spacing:.2em;color:var(--ink-3)}
+.dayno .ph{font-family:"Noto Sans JP",sans-serif;font-size:14px;letter-spacing:0;color:#fff;background:var(--accent);border-radius:50%;width:34px;height:34px;display:inline-grid;place-items:center;align-self:center;font-weight:900}
+.chap h2{font-size:clamp(24px,3.4vw,34px);line-height:1.5;font-weight:900;margin:16px 0 28px}
+
+.pull{font-size:clamp(22px,3.4vw,32px);line-height:1.6;font-weight:900;margin:44px 0;padding-left:24px;border-left:6px solid var(--accent)}
+.hook{font-size:clamp(22px,3vw,28px);font-weight:900;margin:56px 0 20px;color:var(--accent)}
+.say{font-size:clamp(20px,2.8vw,26px);font-weight:900;line-height:1.6;margin:36px 0}
+
+/* noteっぽいリンクカード */
+.card{display:grid;grid-template-columns:1fr 92px;border:1px solid var(--line);border-radius:6px;text-decoration:none;color:var(--ink);margin:28px 0 36px;overflow:hidden}
+.card:hover{border-color:var(--accent)}
+.card .tx{padding:16px 18px}
+.card b{display:block;font-size:15px;line-height:1.5}
+.card span{display:block;font-size:13px;color:var(--ink-2);line-height:1.7;margin-top:4px}
+.card em{display:block;font-style:normal;font-family:var(--en);font-size:11.5px;color:var(--ink-3);margin-top:8px}
+.card .ic{background:var(--paper-2);display:grid;place-items:center}
+.card .ic i{width:36px;height:36px;border:6px solid var(--accent);border-radius:50%}
+
+.tip{display:flex;gap:16px;align-items:flex-start;background:var(--paper-2);padding:20px 22px;margin:28px 0;font-size:14.5px;line-height:1.85}
+.tip i{flex:none;width:18px;height:18px;border:4px solid var(--accent);border-radius:50%;margin-top:4px}
+.tip b{display:block;font-size:15.5px}
+.tip span{color:var(--ink-2)}
+
+.report{border:1px solid var(--ink);padding:24px 24px 18px;margin:32px 0}
+.report .rh{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3);border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px}
+.report .rh b{color:var(--ink);font-size:14px}
+.report ul{list-style:none;margin:0;padding:0}
+.report li{display:flex;gap:12px;align-items:baseline;padding:6px 0;font-size:14.5px;line-height:1.7}
+.report li i{flex:none;width:11px;height:11px;border:3px solid var(--accent);border-radius:50%}
+.report .note{font-size:12px;color:var(--ink-3);margin-top:8px}
+
+pre.code{position:relative;margin:24px 0 32px;background:var(--ink);color:#f2f2f2;padding:44px 22px 22px;font-size:13.5px;line-height:1.9;white-space:pre-wrap;word-break:break-word;font-family:var(--en),"Noto Sans JP",monospace}
+.cp{position:absolute;top:10px;right:10px;font:700 12px "Noto Sans JP",sans-serif;padding:5px 12px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#f2f2f2;border-radius:999px;cursor:pointer}
+.cp:hover{background:rgba(255,255,255,.12)}
+.pr{margin:40px 0 0}
+.pr h3{font-size:18px;margin:0 0 4px}
+.pr p{font-size:14px;color:var(--ink-2);margin:0 !important}
+.pr pre.code{margin-top:14px;padding-top:44px}
+pre.code .c{color:var(--ink-3)}
+
+.ba{border-top:2px solid var(--ink);margin:32px 0}
+.ba-head{display:grid;grid-template-columns:1fr 92px 120px;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:11.5px;font-weight:700;color:var(--ink-3);text-align:right}
+.ba-row{display:grid;grid-template-columns:1fr 92px 120px;gap:12px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
+.ba-row b{font-size:16px;line-height:1.5;display:block}
+.ba-row em{font-style:normal;font-family:var(--en);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--ink-3)}
+.ba-row .bf{font-family:var(--en);font-weight:700;font-size:20px;color:var(--ink-3);text-align:right;text-decoration:line-through}
+.ba-row .af{font-family:var(--en);font-weight:900;font-size:34px;color:var(--accent);text-align:right;line-height:1}
+.ba-row.total b{font-size:18px}
+.ba-row.total .bf{font-size:24px}
+.ba-row.total .af{font-size:44px}
+.ba-row small{font-size:.5em;margin-left:1px}
+.fine{font-size:12px;color:var(--ink-3)}
+
+.keep{list-style:none;margin:24px 0;padding:0;border-top:2px solid var(--ink)}
+.keep li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:18px 0;border-bottom:1px solid var(--line);font-size:15px;line-height:1.85}
+.keep .k{font-family:var(--en);font-weight:900;font-size:24px;color:var(--accent);line-height:1.3}
+.keep b{display:block}
+.keep span{color:var(--ink-2)}
+
+.tools{border-top:2px solid var(--ink);margin:20px 0 8px}
+.tl-row{display:grid;grid-template-columns:1fr auto;gap:8px 20px;padding:22px 0;border-bottom:1px solid var(--line)}
+.tl-row .nm{font-size:17px;font-weight:900;line-height:1.5}
+.tl-row .nm small{display:block;font-family:var(--en);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--ink-3)}
+.tl-row p{grid-column:1 / -1;margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.85}
+.tl-row a{font-size:13.5px;font-weight:700;text-decoration:none;white-space:nowrap;align-self:center}
+.tag{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:0 8px;margin-left:8px;vertical-align:2px}
+.subhead{font-size:13px;font-weight:700;color:var(--ink-3);margin:40px 0 0 !important}
+
+.author{display:flex;gap:16px;align-items:center;margin:88px 0 0;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:14px;color:var(--ink-2)}
+.author i{flex:none;width:48px;height:48px;border:6px solid var(--accent);border-radius:50%}
+
+.data{padding:96px 0 72px;border-top:1px solid var(--line);margin-top:96px}
+.data h3{font-family:var(--en);font-size:12px;letter-spacing:.2em;color:var(--ink-3);margin:0 0 28px;font-weight:700}
+.dgrid{display:grid;grid-template-columns:repeat(5,1fr);border-top:2px solid var(--ink)}
+@media (max-width:900px){.dgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.dgrid{grid-template-columns:1fr}}
+.dcell{padding:24px 18px 24px 0}
+.dcell+.dcell{padding-left:18px;border-left:1px solid var(--line)}
+@media (max-width:900px){.dcell{border-bottom:1px solid var(--line)}.dcell:nth-child(odd){padding-left:0;border-left:0}}
+@media (max-width:520px){.dcell{padding-left:0!important;border-left:0!important}}
+.dnum{font-family:var(--en);font-weight:900;font-size:clamp(28px,3.4vw,44px);line-height:1.05;letter-spacing:-.03em;white-space:nowrap}
+.dnum small{font-size:.42em;margin-left:2px;letter-spacing:0}
+.dcell p{font-size:13px;margin:10px 0 8px;line-height:1.75}
+.dcell cite{font-style:normal;font-size:11px;color:var(--ink-3);line-height:1.6;display:block}
+
+footer{padding:32px 0 48px;font-size:12px;color:var(--ink-3);border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<header class="hd"><div class="wrap"><div class="logo"><i></i>採用とAIのはなし</div></div></header>
+
+<div class="top">
+  <div class="wrap">
+    <span class="cat">体験談</span>
+    <h1>Claude Codeで採用を<br>自動化しまくった結果、<br>就活生と共通の友人がいると<br>判明し<span class="ac">激アツ</span>すぎた話。</h1>
+    <p class="subt">AIなんて無理だと思ってた採用担当の、100日間の記録</p>
+    <div class="meta"><span class="en">2026.10.02</span><span>読了 約8分</span><span>Claude Code ／ Genspark Speakly ほか</span></div>
+    <div class="track" aria-hidden="true">
+      <div class="pt" style="left:0"><i></i><b>DAY 0</b></div>
+      <div class="pt" style="left:14%"><i></i><b>14</b></div>
+      <div class="pt" style="left:30%"><i></i><b>30</b></div>
+      <div class="pt" style="left:45%"><i></i><b>45</b></div>
+      <div class="pt" style="left:60%"><i></i><b>60</b></div>
+      <div class="pt" style="left:80%"><i></i><b>80</b></div>
+      <div class="pt end" style="left:100%"><i></i><b>DAY 100</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="article">
+  <div class="wrap two">
+
+    <nav class="toc" aria-label="目次">
+      <p>CONTENTS</p>
+      <ol>
+        <li><a href="#d0"><b>起 ｜ DAY 0</b>正直、無理だと思ってた</a></li>
+        <li><a href="#d1"><b>承 ｜ DAY 1</b>え、30秒で終わった…？</a></li>
+        <li><a href="#d14"><b>承 ｜ DAY 14</b>面接メモ、もう打ってません</a></li>
+        <li><a href="#d30"><b>承 ｜ DAY 30</b>スカウトの返信が変わった</a></li>
+        <li><a href="#d45"><b>転 ｜ DAY 45</b>で、一回やらかしました</a></li>
+        <li><a href="#d60"><b>転 ｜ DAY 60</b>頼むのすら、やめてみた</a></li>
+        <li><a href="#d80"><b>転 ｜ DAY 80</b>もう、AIのまま送ってます</a></li>
+        <li><a href="#d100"><b>結 ｜ DAY 100</b>余裕ができたら、激アツなことが起きた</a></li>
+        <li><a href="#prompts"><b>PROMPTS</b>実際のプロンプト、ぜんぶ</a></li>
+        <li><a href="#tools"><b>TOOLS</b>ほんとにおすすめなやつ</a></li>
+        <li><a href="#end"><b>END</b>100日前の私へ</a></li>
+      </ol>
+    </nav>
+
+    <article class="post">
+      <p class="lead">こんにちは。今日はちょっと、自慢させてください（笑）</p>
+      <p>採用の仕事って、とにかく<b>「書く」</b>が多いじゃないですか。エントリーシートのまとめ、スカウト文、求人票、面接メモ、学生さんへの連絡…。それを100日かけて少しずつAIに渡していったら、<span class="mk">朝Slackを開くと、決まった連絡はもう送られていて、私が見るべきものだけが残ってる</span>状態になりました。</p>
+      <p>で、そうやって浮いた時間のおかげで、最後に<b>めちゃくちゃ激アツなこと</b>が起きました。その話は最後に書くので、ぜひそこまで読んでください（笑）</p>
+      <p>プログラミングは一切できません。そんな私でもできたので、同じように毎日パソコンに張りついてる採用担当さんに、ぜひ読んでほしいです。</p>
+
+      <!-- 起 -->
+      <section class="chap" id="d0">
+        <div class="dayno">0<small>DAY</small><span class="ph">起</span></div>
+        <h2>正直、「AIで採用なんて無理でしょ」と思ってた。</h2>
+        <p>最初に白状しておくと、私はAIにかなり懐疑的でした。</p>
+        <p>だって採用って、人を見る仕事じゃないですか。「AIに任せたら雑になりそう」「結局ぜんぶ直すことになって、二度手間なんじゃないの？」って、本気で思ってたんです。</p>
+        <p>でも、ある週にふと自分の作業時間を数えてみたんですよね。そしたら、書類のまとめ・スカウト文・求人の更新・面接メモの清書だけで、<b>週に <span data-h="total">16</span> 時間</b>。</p>
+        <div class="pull">え、候補者と話してる時間より<br>長くない…？</div>
+        <p>これはさすがにまずいなと。「人を見る」ための時間を、「書く」に全部吸われてたんです。それで、ダメ元で試してみることにしました。</p>
+      </section>
+
+      <!-- 承 -->
+      <section class="chap" id="d1">
+        <div class="dayno">1<small>DAY</small><span class="ph">承</span></div>
+        <h2>え、30秒で終わった…？ 最初の衝撃。</h2>
+        <p>最初に試したのは、いちばん時間を食ってた<b>応募書類のまとめ</b>です。使ったのは <a href="https://www.anthropic.com/claude-code" target="_blank" rel="noopener">Claude Code</a>。パソコンの中のファイルを読んで、日本語で頼んだことをそのままやってくれるAIです。</p>
+        <p>頼み方は本当にこれだけ。</p>
+        <pre class="code">このフォルダのエントリーシートを、評価の観点ごとに要約して。
+根拠になる文章は原文から引用して。合否は書かないで。</pre>
+        <p>1件10分以上かかってたまとめが、<span class="mk">30秒くらいで</span>出てきました。思わず「え？」って声出ました。</p>
+        <p>もちろん最初は疑って全部読み直してたんですけど、根拠が原文の引用で付いてくるので、確認がめちゃくちゃ早いんです。1週間後には、気になるところだけ見ればよくなってました。</p>
+        <a class="card" href="https://www.anthropic.com/claude-code" target="_blank" rel="noopener">
+          <div class="tx"><b>Claude Code ｜ Anthropic</b><span>ファイルを読んで、日本語で頼んだ作業をやってくれるAI。この記事の主役です。</span><em>anthropic.com</em></div>
+          <div class="ic"><i></i></div>
+        </a>
+      </section>
+
+      <section class="chap" id="d14">
+        <div class="dayno">14<small>DAY</small><span class="ph">承</span></div>
+        <h2>面接メモ、もうキーボードで打ってません。</h2>
+        <p>次にしんどかったのが、面接のあとのメモ。次の面接まで5分しかないのに、急いでカタカタ打って、誤字だらけで…みたいな毎日でした。</p>
+        <p>で、これがほんとにおすすめなんですけど、<a href="https://www.genspark.ai/speakly/invite/MTNiOTA0NzNMOWZiZkwzN2U0TDJmMWIyNGQ5ZmFlYUwxNDRi" target="_blank" rel="noopener">Genspark Speakly</a> っていう音声入力ツールを使い始めました。面接が終わったら、感じたことを<b>ひとりごとみたいにしゃべるだけ</b>。それが、ちゃんと読める文章になって出てきます。</p>
+        <p class="say">しゃべるだけで、メモが終わる。<br>もう戻れないです、ほんとに。</p>
+        <div class="tip"><i></i><div><b>私のやり方</b><span>Speaklyでしゃべったメモを、そのままClaude Codeに渡して「評価シートの項目に沿って整理して」と頼む。打つ・まとめる、が両方なくなります。</span></div></div>
+        <a class="card" href="https://www.genspark.ai/speakly/invite/MTNiOTA0NzNMOWZiZkwzN2U0TDJmMWIyNGQ5ZmFlYUwxNDRi" target="_blank" rel="noopener">
+          <div class="tx"><b>Genspark Speakly</b><span>話すだけで、整った文章にしてくれる音声入力ツール。面接メモに最強です。</span><em>genspark.ai</em></div>
+          <div class="ic"><i></i></div>
+        </a>
+      </section>
+
+      <section class="chap" id="d30">
+        <div class="dayno">30<small>DAY</small><span class="ph">承</span></div>
+        <h2>スカウトを一人ずつ書き分けたら、返信が変わった。</h2>
+        <p>調子に乗ってきたので（笑）、スカウト文もお願いしてみました。候補者のプロフィールを渡して、「なぜこの人に送るのかを冒頭に1つ入れて」と頼むだけ。</p>
+        <p>今までは、時間がなくて同じ文面を一斉送信してたんですよね。それを一人ひとり違う文面にしただけで、<span class="mk">返信してくれる人が明らかに増えた</span>感覚があります。やっぱり「自分宛て」って伝わるんだなあと。</p>
+        <p>ついでに求人票の見直しと、noteの採用記事の下書きも任せるようになりました。ちなみに、求人の更新や採用記事の配信を<b>まるごと代わりにやってくれる</b>サービスもあります。自分で指示を書くのが面倒な人は、こっちのほうが早いかも。</p>
+        <a class="card" href="https://hachidori-hr-note.figma.site/" target="_blank" rel="noopener">
+          <div class="tx"><b>ハチドリHR+note</b><span>求人の毎日の更新と、noteの採用記事配信をAIが代行。30日間無料で試せます。</span><em>hachidori-hr-note.figma.site</em></div>
+          <div class="ic"><i></i></div>
+        </a>
+      </section>
+
+      <!-- 転 -->
+      <section class="chap" id="d45">
+        <div class="dayno">45<small>DAY</small><span class="ph">転</span></div>
+        <h2>で、一回やらかしました。</h2>
+        <p>ここまで順調すぎて、正直ちょっと油断してたんです。</p>
+        <p>ある日、AIが作ってくれた候補者へのフォロー文を、ほぼ読まずに送ろうとしたんですね。送信ボタンを押す直前に、なんとなく読み返してみたら…<b>残業時間の数字が、うちの実態と違ってた</b>んです。</p>
+        <div class="pull">あと1秒で、<br>候補者にウソを送るところだった。</div>
+        <p>AIって、情報が足りないと<b>それっぽい数字を自分で埋めちゃう</b>ことがあるんですよね。これはAIが悪いというより、確認しなかった私が悪い。</p>
+        <p>この日から、自分の中でルールを決めました。</p>
+        <ul class="keep">
+          <li><div class="k en">01</div><div><b>合否は、私が決める</b><span>AIがやるのは判断材料をそろえるところまで。決めるのも、理由を説明するのも人です。</span></div></li>
+          <li><div class="k en">02</div><div><b>事実は、送る前に必ず見比べる</b><span>給与・残業・制度などの数字は、元の資料と照らしてから送る。今回の教訓です。</span></div></li>
+          <li><div class="k en">03</div><div><b>公正な選考を守る</b><span>厚生労働省の「公正な採用選考の基本」に沿って、本人の適性と関係ないことは判断に使わない。AIへの指示にも書いておく。</span></div></li>
+          <li><div class="k en">04</div><div><b>個人情報は、決めた環境でだけ扱う</b><span>応募書類は、入力した内容が学習に使われない設定の環境で扱う。</span></div></li>
+        </ul>
+        <p>このルールを決めてからは、逆に安心して任せられるようになりました。<b>「全部AI」じゃなくて「作業はAI、判断は人」</b>。ここがいちばん大事なところだと思ってます。</p>
+      </section>
+
+      <section class="chap" id="d60">
+        <div class="dayno">60<small>DAY</small><span class="ph">転</span></div>
+        <h2>頼むのすら、やめてみた。</h2>
+        <p>ここが本当の転機でした。</p>
+        <p>この時点でも、まだ毎朝<b>自分でClaude Codeに「これやって」と頼んでた</b>んですよね。で、ある日気づいたんです。「これ、毎日同じこと頼んでない…？」って。</p>
+        <p>Claude Codeには<b>予約機能</b>があって、「毎朝7時にこれをやって」と登録しておけるんです。登録した指示は、今まで頼んできたことを並べただけ。ふつうの日本語です。</p>
+<pre class="code"><span class="c"># 毎朝7:00に実行（指示の例）</span>
+1. 昨日届いた応募書類を読み、評価の観点ごとに要約する。
+   根拠は原文から引用する。合否は書かない。
+2. スカウト候補のプロフィールを読み、一人ずつ文面を書き分ける。
+3. 求人票の情報が古くなっていないか確認し、更新案とnote記事の下書きを作る。
+4. 昨日の面接メモを整理し、候補者が気にしていた点に答えるフォロー文を作る。
+   給与・残業などの数字は、社内資料にあるものだけを使う。
+5. 全部まとめて Slack の #採用 に投稿する。
+<span class="c"># 年齢・性別・家族構成など、選考に関係ない情報には触れないこと</span></pre>
+        <p>4番の「数字は社内資料にあるものだけ」は、45日目の反省です（笑）</p>
+        <p>そうしたら次の日の朝から、こんなレポートが届くようになりました。</p>
+        <div class="report">
+          <div class="rh"><b>おはようございます。今朝の採用レポートです</b><span class="en">7:28</span></div>
+          <ul>
+            <li><i></i>新しい応募 3件を、評価の観点ごとに要約しました</li>
+            <li><i></i>スカウト候補 5名分の文面を、一人ずつ書き分けました</li>
+            <li><i></i>求人票 2件の更新案と、note記事の下書きを1本作りました</li>
+            <li><i></i>昨日の面接 2件を整理し、フォローの文面を用意しました</li>
+          </ul>
+          <div class="note">※ 届くレポートのイメージです（件数は例）</div>
+        </div>
+        <p class="say">寝てる間に、仕事が終わってる。<br>これ、ほんとにおすすめです。</p>
+      </section>
+
+      <section class="chap" id="d80">
+        <div class="dayno">80<small>DAY</small><span class="ph">転</span></div>
+        <h2>もう、下書きじゃなくてAIのまま送ってます。</h2>
+        <p>朝のレポートを毎日見ていて、また気づいたんです。「日程調整とか、説明会のリマインドとか、私ほぼ直さずに送ってない…？」って。</p>
+        <p>なので思い切って、<b>決まった連絡はAIがそのまま送る</b>のをデフォルトにしました。</p>
+<pre class="code"><span class="c"># 毎朝の指示に追加したこと</span>
+- 日程調整・説明会のリマインド・エントリーや面接のお礼は、確認なしでそのまま送る。
+- 給与・残業などの数字が入る連絡、合否に関わる連絡、学生さんからの相談への返事は、
+  送らずに Slack で私に確認を求める。</pre>
+        <p>どこまで任せていいかの線引きができたのは、45日目にやらかしてルールを決めていたおかげです。失敗、無駄じゃなかった（笑）</p>
+        <div class="report">
+          <div class="rh"><b>おはようございます。今朝の採用レポートです</b><span class="en">7:31</span></div>
+          <ul>
+            <li><i></i>日程調整・リマインド・お礼の連絡を 12件 送りました</li>
+            <li><i></i>スカウト 5通を、一人ずつ書き分けて送りました</li>
+            <li><i></i>新しいエントリー 4件を、評価の観点ごとに要約しました</li>
+            <li><i></i>確認が必要な連絡が 2件 あります（給与についての質問への返信）</li>
+          </ul>
+          <div class="note">※ 届くレポートのイメージです（件数は例）</div>
+        </div>
+        <p class="say">朝やることは、<br>「確認が必要な2件」を見るだけ。</p>
+      </section>
+
+      <!-- 結 -->
+      <section class="chap" id="d100">
+        <div class="dayno">100<small>DAY</small><span class="ph">結</span></div>
+        <h2>余裕ができたら、面接で激アツなことが起きた。</h2>
+        <p>そして100日目。まずは、最初に数えた作業がどうなったか並べてみます。</p>
+        <div class="ba">
+          <div class="ba-head"><span></span><span>100日前</span><span>いま</span></div>
+          <div class="ba-row"><div><em>書類選考</em><b>応募書類を読んでまとめる</b></div><div class="bf">週<span data-h="docs">5</span>h</div><div class="af"><span data-a="docs">30</span><small>分</small></div></div>
+          <div class="ba-row"><div><em>面接</em><b>面接メモの清書・フォロー連絡</b></div><div class="bf">週<span data-h="follow">4</span>h</div><div class="af"><span data-a="follow">30</span><small>分</small></div></div>
+          <div class="ba-row"><div><em>母集団形成</em><b>スカウト文を書く</b></div><div class="bf">週<span data-h="scout">4</span>h</div><div class="af"><span data-a="scout">20</span><small>分</small></div></div>
+          <div class="ba-row"><div><em>採用広報</em><b>求人票の更新・採用記事</b></div><div class="bf">週<span data-h="post">3</span>h</div><div class="af"><span data-a="post">20</span><small>分</small></div></div>
+          <div class="ba-row total"><div><b>合計（週あたり）</b></div><div class="bf"><span data-h="total">16</span>h</div><div class="af"><span data-a="total">1.7</span><small>h</small></div></div>
+        </div>
+        <p class="fine">※ 時間は私の体感の目安です。いまの時間は、AIから「確認して」と来た連絡を見る時間です。</p>
+        <p>週16時間かかっていた作業が、2時間弱に。</p>
+
+        <h3 class="hook">そして、自分のチームの採用募集をやめました（笑）</h3>
+        <p>実は100日前、この作業をお願いするために、<b>自分のチームにメンバーを一人増やそう</b>と思って、募集の準備をしてたんです。</p>
+        <p>でも気づいたら、その人にお願いしようと思っていた仕事、ぜんぶClaude Codeがやってくれてるんですよね。</p>
+        <div class="pull">採用担当なのに、<br>自分のチームの採用は<br>やめちゃいました（笑）</div>
+        <p>でも、本当に書きたいのはここからです。</p>
+
+        <h3 class="hook">で、ここからが本題。</h3>
+        <p>余裕ができて一番変わったのは、<b>面接</b>でした。</p>
+        <p>前は、面接の直前にエントリーシートをバタバタ読んで、聞くべきことを聞いたら次の書類…みたいな感じでカツカツだったんです。いまは朝のうちにAIの要約で学生さんのことが頭に入っているので、面接では<span class="mk">「なんでそう思ったんですか？」と深掘りする余裕</span>がある。最後に5分くらい雑談する時間も取れるようになりました。</p>
+        <p>そんなある日の、就活生との面接。学生時代に打ち込んだことを深掘りしていたら、聞き覚えのある名前が出てきたんです。</p>
+        <p>「…あれ？ その◯◯さんって、もしかして…」</p>
+        <div class="pull">え、◯◯のこと<br>知ってるんですか！？</div>
+        <p>まさかの、<b>共通の友人</b>でした。</p>
+        <p>そこから一気に空気が変わって。お互い笑っちゃって、学生さんも肩の力が抜けたのか、就活で不安に思っていることや、本当はどんな仕事がしたいのかまで、本音で話してくれました。面接というより、もう普通の会話でした。</p>
+        <p class="say">これ、ほんとに激アツでした。</p>
+        <p>でも冷静に考えると、書類と作業に追われていた100日前の私だったら、絶対にこの話にはたどり着けてないんですよね。学生さんの話を深掘りする余裕も、最後の5分の雑談もなかったので。</p>
+        <div class="pull">自動化で増えたのは、<br>時間じゃなくて、<br>人と話す余白だった。</div>
+        <p>100日前に「AIで採用なんて無理」って言ってた自分に、この日の面接を見せてあげたいです（笑）</p>
+        <p>ちなみに、候補者とのやりとりをLINEでAIが続けてくれる <a href="https://lsync-saiyo.figma.site/" target="_blank" rel="noopener">採用Lシンク</a> とか、AI同士が先に「0次面接」してくれる <a href="https://hachidori.aibird.jp/r/afc6dh2t?via=115" target="_blank" rel="noopener">ハチドリAIエージェント</a> みたいなサービスも出てきてて、次はこのあたりも試してみたいなと思ってます。</p>
+      </section>
+
+      <section class="chap" id="prompts">
+        <div class="dayno" style="font-size:clamp(40px,5vw,56px)">PROMPTS</div>
+        <h2>実際に使ってるプロンプト、ぜんぶ置いときます。</h2>
+        <p>「で、具体的になんて頼んでるの？」ってよく聞かれるので、そのままコピペできる形で置いておきます。【 】のところだけ、自分の会社に合わせて書き換えてください。</p>
+
+        <div class="pr">
+          <h3>① エントリーシートのまとめ</h3>
+          <p>Day 1 で最初に試したやつ。Claude Code にフォルダを開いた状態で頼みます。</p>
+<pre class="code">【ES】フォルダにあるエントリーシートを1件ずつ読んで、下の観点ごとに整理してください。
+
+# 評価の観点
+【例：1. 主体性 / 2. チームでの役割 / 3. 当社の仕事への興味】
+
+# 出力のルール
+- 観点ごとに「根拠になる記述（原文をそのまま引用）」と「どの程度あてはまるか（十分／一部／記載なし）」を書く
+- 面接で深掘りすると良さそうな質問を3つ
+- 合否の判断や点数はつけない
+- 年齢・性別・出身地・家族など、選考に関係ない情報には触れない
+- 結果は1人1ファイルで【ES要約】フォルダに保存する</pre>
+        </div>
+
+        <div class="pr">
+          <h3>② 面接メモの清書</h3>
+          <p>Day 14。Speakly でしゃべったメモをそのまま貼るだけ。</p>
+<pre class="code">以下は、面接直後に音声入力でしゃべったメモです。評価シートの項目に沿って整理してください。
+
+# 評価シートの項目
+【例：話の具体性 / 主体性 / チームでの動き方 / 当社への志望度】
+
+# メモ
+【Speaklyで話したメモを貼る】
+
+# 出力のルール
+- 項目ごとに、メモの中から根拠になる発言を抜き出して並べる
+- 学生さんが気にしていそうなこと・聞けていなさそうなことを書き出す
+- 次の面接で確認したいことを3つ
+- 点数や合否はつけない</pre>
+        </div>
+
+        <div class="pr">
+          <h3>③ 一人ずつ書き分けるスカウト</h3>
+          <p>Day 30。返信が変わったのはこれ。</p>
+<pre class="code">以下の学生さんのプロフィールを読んで、スカウトのメッセージを書いてください。
+
+# 学生さんのプロフィール
+【プロフィールを貼る】
+
+# 当社と募集の情報
+【会社・仕事内容・募集職種の要点を貼る】
+
+# 書き方
+- 冒頭で「プロフィールのどこに惹かれて送ったのか」を具体的に1つ書く
+- その経験が、当社のどんな仕事で活きそうかを書く
+- 全体で250字以内。かしこまりすぎない、話しかけるような文で
+- 最後は「まずは30分、気軽にお話ししませんか？」で締める
+- プロフィールに書かれていないことは書かない</pre>
+        </div>
+
+        <div class="pr">
+          <h3>④ 毎朝7時に勝手に動く指示</h3>
+          <p>Day 60〜80。Claude Code の予約機能に「毎朝7:00」で登録しているもの。これが本体です。</p>
+<pre class="code">毎朝7:00に、採用まわりの作業を次の順番で進めてください。
+
+1. 【ES】フォルダに昨日届いたエントリーシートを読み、評価の観点ごとに要約する
+   （観点は【評価の観点.md】を見る）。根拠は原文から引用し、合否は書かない。
+2. 【スカウト候補】のリストから5名を選び、一人ずつ書き分けたスカウトを送る。
+3. 【面接メモ】フォルダの昨日のメモを評価シートの項目に沿って清書し、
+   学生さんが気にしていた点に答えるフォローの連絡文を作る。
+4. 求人票の内容が【社内資料】と食い違っていないか確認し、古い箇所があれば更新案を作る。
+   あわせて、noteに載せる採用記事の下書きを1本作る。
+
+# 送っていいもの・送らないもの
+- 日程調整、説明会のリマインド、エントリーや面接のお礼、スカウトは、確認なしでそのまま送る。
+- 給与・残業・休日などの数字が入る連絡、合否に関わる連絡、学生さんからの相談への返事は、
+  送らずに残しておき、私に確認を求める。
+- 数字は【社内資料】にあるものだけを使う。分からないものは書かずに「要確認」とする。
+
+# 守ること
+- 年齢・性別・出身地・家族など、選考に関係ない情報には触れない。
+- 合否の判断はしない。
+
+# 最後に
+やったことを Slack の【#採用】に、次の形でまとめて投稿する。
+- 送った連絡（件数と宛先）
+- 要約したエントリーシート（件数）
+- 私の確認が必要なもの（理由を一言つけて）</pre>
+        </div>
+        <p class="fine" style="margin-top:20px">※ フォルダ名やチャンネル名は私の環境のものです。Slackへの投稿やメールの送信は、Claude Code にそれぞれのツールをつないでおく必要があります。</p>
+      </section>
+
+      <section class="chap" id="tools">
+        <div class="dayno" style="font-size:clamp(40px,5vw,56px)">TOOLS</div>
+        <h2>ほんとにおすすめなやつだけ、置いておきます。</h2>
+        <p>記事に出てきたツールのまとめです。迷ったら、上の2つからでぜひ。</p>
+
+        <p class="subhead">私が毎日使ってるもの</p>
+        <div class="tools">
+          <div class="tl-row">
+            <div class="nm"><small>AI AGENT ｜ Anthropic</small>Claude Code</div>
+            <a href="https://www.anthropic.com/claude-code" target="_blank" rel="noopener">公式サイト →</a>
+            <p>ファイルを読んで、日本語で頼んだ作業をやってくれるAI。予約機能で「毎朝◯時に」と決めておけば、寝てる間に作業が終わります。</p>
+          </div>
+          <div class="tl-row">
+            <div class="nm"><small>VOICE INPUT ｜ Genspark</small>Genspark Speakly</div>
+            <a href="https://www.genspark.ai/speakly/invite/MTNiOTA0NzNMOWZiZkwzN2U0TDJmMWIyNGQ5ZmFlYUwxNDRi" target="_blank" rel="noopener">使ってみる →</a>
+            <p>しゃべるだけで、整った文章にしてくれる音声入力ツール。面接メモや求人票のたたき台づくりに。</p>
+          </div>
+        </div>
+
+        <p class="subhead">採用向けに作られたサービス（指示を書かなくていい）</p>
+        <div class="tools">
+          <div class="tl-row">
+            <div class="nm"><small>母集団形成・採用広報</small>ハチドリHR+note<span class="tag">自社サービス</span></div>
+            <a href="https://hachidori-hr-note.figma.site/" target="_blank" rel="noopener">見る →</a>
+            <p>求人の毎日の更新と、noteの採用記事配信をAIが代行。月3万円、30日間の無料トライアルあり。</p>
+          </div>
+          <div class="tl-row">
+            <div class="nm"><small>書類選考・一次面接の手前</small>ハチドリAIエージェント<span class="tag">自社サービス</span></div>
+            <a href="https://hachidori.aibird.jp/r/afc6dh2t?via=115" target="_blank" rel="noopener">見る →</a>
+            <p>会社の採用AIと候補者の分身AIが、人より先に「0次面接」で条件をすり合わせる人材紹介。成果報酬27%、いまは企業登録の先行受付中。</p>
+          </div>
+          <div class="tl-row">
+            <div class="nm"><small>候補者フォロー</small>採用Lシンク<span class="tag">自社サービス</span></div>
+            <a href="https://lsync-saiyo.figma.site/" target="_blank" rel="noopener">見る →</a>
+            <p>LINE上のAIリクルーターが、候補者の質問に24時間答えてくれる。説明会のあとの取りこぼし対策に。</p>
+          </div>
+        </div>
+        <p class="fine">※ 料金・提供状況は2026年10月時点の各サービスページの記載に基づきます。</p>
+      </section>
+
+      <section class="chap" id="end">
+        <div class="dayno" style="font-size:clamp(40px,5vw,56px)">END</div>
+        <h2>100日前の私へ。全部を一気に変えなくていいよ。</h2>
+        <p>振り返ってみると、最初の一歩は本当に小さかったです。いちばんしんどい作業をひとつ選んで、AIに頼んでみただけ。そこから「これもいけるかも」が、どんどんつながっていきました。</p>
+        <p>ただ、私は運よく試す時間があったんですけど、「そもそもうちの採用で、どの作業からAIに渡せばいいの？」ってところで止まっちゃう人も多いと思うんです。私も45日目のやらかしみたいに、一人だと気づけないこともありました。</p>
+        <p>そういうときは、<b>AIに詳しい人に一回相談しちゃう</b>のが早いです。</p>
+        <p><a href="https://jsaas.jp/aibird/customer/register?ref=oYbrIffJOAi98YmjL2R9BYdtyRMdbQWR" target="_blank" rel="noopener">AIバード</a> っていう、業務改善やAI活用のプロに時間単位で相談できるサービスがあって、「何を頼めばいいか分からない」状態からでも、いまの業務を一緒に棚卸しして「どこからAIに任せるか」を整理してくれます。登録も相談も無料で、依頼が決まるまでお金はかからないので、気軽に聞いてみてください。</p>
+        <a class="card" href="https://jsaas.jp/aibird/customer/register?ref=oYbrIffJOAi98YmjL2R9BYdtyRMdbQWR" target="_blank" rel="noopener">
+          <div class="tx"><b>AIバード ｜ AI活用のプロに相談できるサービス</b><span>何をAI化できるか分からなくてもOK。業務の棚卸しから一緒に。登録・相談は無料です。</span><em>jsaas.jp</em></div>
+          <div class="ic"><i></i></div>
+        </a>
+        <p>AIに作業を任せると、人と向き合う時間が戻ってくる。この記事が、誰かの「激アツな面接」のきっかけになったらうれしいです。最後まで読んでくださって、ありがとうございました！</p>
+
+        <div class="author"><i aria-hidden="true"></i><div>採用担当。書く仕事をAIに渡して、候補者と話す時間を取り戻し中。</div></div>
+      </section>
+    </article>
+  </div>
+</div>
+
+<section class="data">
+  <div class="wrap">
+    <h3>参考 ｜ 採用とAIをめぐる数字</h3>
+    <div class="dgrid">
+      <div class="dcell"><div class="dnum en">1.20<small>倍</small></div><p>有効求人倍率（2025年度平均）。求職者1人に対して、求人が1件以上ある状態が続いている。</p><cite>厚生労働省「一般職業紹介状況（令和8年3月分及び令和7年度分）」</cite></div>
+      <div class="dcell"><div class="dnum en">51.3<small>%</small></div><p>正社員が不足していると答えた企業の割合。7月として4年連続で半数を超えた。</p><cite>帝国データバンク「人手不足に対する企業の動向調査（2026年7月）」</cite></div>
+      <div class="dcell"><div class="dnum en">650.6<small>万円</small></div><p>1社あたりの年間の中途採用費用の平均。前年から20.9万円増えている。</p><cite>マイナビ「中途採用状況調査2025年版（2024年実績）」</cite></div>
+      <div class="dcell"><div class="dnum en">55.2<small>%</small></div><p>何らかの業務で生成AIを使っている日本企業の割合。米・独・中より低い水準。</p><cite>総務省「令和7年版 情報通信白書」</cite></div>
+      <div class="dcell"><div class="dnum en">No.1</div><p>日本企業が生成AI導入で最も多く挙げた懸念は「効果的な活用方法がわからない」。</p><cite>総務省「令和7年版 情報通信白書」</cite></div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">採用とAIのはなし ｜ 掲載の数字は各出典の公表値です。</div></footer>
+
+<script>
+/* ===== ここの数字を書き換えると、記事内の「週◯時間」がすべて変わります ===== */
+var HOURS = {
+  docs: 5,    // 応募書類を読んでまとめる
+  follow: 4,  // 面接メモの清書・フォロー連絡
+  scout: 4,   // スカウト文を書く
+  post: 3     // 求人票の更新・採用記事
+};
+/* いま（確認だけ）の時間。単位は「分」 */
+var AFTER_MIN = {
+  docs: 30,
+  follow: 30,
+  scout: 20,
+  post: 20
+};
+HOURS.total = HOURS.docs + HOURS.follow + HOURS.scout + HOURS.post;
+AFTER_MIN.total = Math.round((AFTER_MIN.docs + AFTER_MIN.follow + AFTER_MIN.scout + AFTER_MIN.post) / 6) / 10; // 時間に換算
+document.querySelectorAll('[data-h]').forEach(function(el){
+  var v = HOURS[el.getAttribute('data-h')];
+  if (v !== undefined) el.textContent = v;
+});
+document.querySelectorAll('[data-a]').forEach(function(el){
+  var v = AFTER_MIN[el.getAttribute('data-a')];
+  if (v !== undefined) el.textContent = v;
+});
+
+/* 目次の現在地 */
+var links = document.querySelectorAll('.toc a');
+if ('IntersectionObserver' in window) {
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (e.isIntersecting) {
+        links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
+      }
+    });
+  }, {rootMargin:'-30% 0px -60% 0px'});
+  document.querySelectorAll('.chap').forEach(function(s){ io.observe(s); });
+}
+
+/* プロンプトのコピー */
+document.querySelectorAll('pre.code').forEach(function(pre){
+  var b=document.createElement('button'); b.type='button'; b.className='cp'; b.textContent='コピー';
+  b.addEventListener('click',function(){
+    var c=pre.cloneNode(true); c.querySelectorAll('.cp,.c').forEach(function(x){x.remove();});
+    var t=c.textContent.trim();
+    var ok=function(){b.textContent='コピーしました';setTimeout(function(){b.textContent='コピー';},1600);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){fb(t);ok();});}else{fb(t);ok();}
+  });
+  pre.appendChild(b);
+});
+function fb(t){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(a);}
+</script>
+</body>
+</html>

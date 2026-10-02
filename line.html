@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【冒頭公開】Claude Codeで採用を自動化しまくった結果、就活生と共通の友人がいることが判明し激アツすぎた話</title>
+<meta name="description" content="正直、無理だと思ってた。採用の「書く仕事」を100日かけてAIに渡していったら、浮いた時間で面接を深掘りしたら、就活生と共通の友人がいることが分かった話です。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* 緑1色＋白＋黒 */
+:root{
+  --accent:#0a6b4f;
+  --ink:#111111;
+  --ink-2:#555555;
+  --ink-3:#9a9a9a;
+  --line:#e6e6e6;
+  --paper:#ffffff;
+  --paper-2:#f6f6f4;
+  --en:"Inter","Noto Sans JP",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans JP",sans-serif;font-size:16.5px;line-height:2.05;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:1150px;margin:0 auto;padding:0 24px}
+@media (max-width:520px){.wrap{padding:0 16px}body{font-size:16px}}
+.ac{color:var(--accent)}
+.en{font-family:var(--en)}
+.mk{background:linear-gradient(transparent 62%,#d4ebe3 62%);font-weight:700}
+
+.hd{border-bottom:1px solid var(--line)}
+.hd .wrap{display:flex;align-items:center;height:56px}
+.logo{font-size:14px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+.logo i{width:14px;height:14px;border:3px solid var(--accent);border-radius:50%}
+
+/* ===== タイトル ===== */
+.top{padding:96px 0 72px}
+.cat{display:inline-block;font-size:12px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:2px 12px;margin-bottom:28px}
+.top h1{font-size:clamp(28px,4.8vw,60px);line-height:1.28;font-weight:900;letter-spacing:-.02em;margin:0 0 28px}
+.top h1 .day{font-family:var(--en);font-weight:900}
+.subt{font-size:clamp(16px,2vw,19px);font-weight:700;color:var(--ink-2);margin:-8px 0 28px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:13px;color:var(--ink-3)}
+.track{margin-top:64px;position:relative;height:72px}
+.track::before{content:"";position:absolute;left:0;right:0;top:20px;height:2px;background:var(--accent)}
+.track .pt{position:absolute;top:8px;transform:translateX(-50%);text-align:center}
+.track .pt i{display:block;width:26px;height:26px;border:5px solid var(--accent);border-radius:50%;background:var(--paper);margin:0 auto 8px}
+.track .pt b{font-family:var(--en);font-size:12px;font-weight:700;white-space:nowrap}
+.track .pt.end i{width:40px;height:40px;margin-top:-7px;border-width:7px}
+.track .pt:first-child{transform:none;text-align:left}
+.track .pt:first-child i{margin-left:0}
+.track .pt.end{transform:translateX(-100%);text-align:right}
+.track .pt.end i{margin-right:0}
+
+/* ===== 本文 ===== */
+.article{border-top:1px solid var(--line);padding:88px 0 40px}
+.two{display:grid;grid-template-columns:240px 1fr;gap:72px}
+@media (max-width:860px){.two{grid-template-columns:1fr;gap:0}.toc{display:none}}
+.toc{position:sticky;top:40px;align-self:start;font-size:13.5px}
+.toc p{font-family:var(--en);font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--ink-3);margin:0 0 16px}
+.toc ol{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.toc li a{display:block;padding:7px 0 7px 18px;margin-left:-2px;border-left:2px solid transparent;color:var(--ink-2);text-decoration:none;line-height:1.5}
+.toc li a b{font-family:var(--en);display:block;font-size:12px;color:var(--ink-3)}
+.toc li a.on{border-left-color:var(--accent);color:var(--ink)}
+.toc li a.on b{color:var(--accent)}
+
+.post{max-width:700px}
+.post p{margin:0 0 1.5em}
+.lead{font-size:18px;line-height:2.1}
+
+.chap{margin:120px 0 0;scroll-margin-top:32px}
+.chap:first-of-type{margin-top:72px}
+.dayno{font-family:var(--en);font-weight:900;font-size:clamp(56px,8vw,96px);line-height:1;letter-spacing:-.04em;color:var(--accent);display:flex;align-items:baseline;gap:12px}
+.dayno small{font-size:14px;letter-spacing:.2em;color:var(--ink-3)}
+.dayno .ph{font-family:"Noto Sans JP",sans-serif;font-size:14px;letter-spacing:0;color:#fff;background:var(--accent);border-radius:50%;width:34px;height:34px;display:inline-grid;place-items:center;align-self:center;font-weight:900}
+.chap h2{font-size:clamp(24px,3.4vw,34px);line-height:1.5;font-weight:900;margin:16px 0 28px}
+
+.pull{font-size:clamp(22px,3.4vw,32px);line-height:1.6;font-weight:900;margin:44px 0;padding-left:24px;border-left:6px solid var(--accent)}
+.hook{font-size:clamp(22px,3vw,28px);font-weight:900;margin:56px 0 20px;color:var(--accent)}
+.say{font-size:clamp(20px,2.8vw,26px);font-weight:900;line-height:1.6;margin:36px 0}
+
+/* noteっぽいリンクカード */
+.card{display:grid;grid-template-columns:1fr 92px;border:1px solid var(--line);border-radius:6px;text-decoration:none;color:var(--ink);margin:28px 0 36px;overflow:hidden}
+.card:hover{border-color:var(--accent)}
+.card .tx{padding:16px 18px}
+.card b{display:block;font-size:15px;line-height:1.5}
+.card span{display:block;font-size:13px;color:var(--ink-2);line-height:1.7;margin-top:4px}
+.card em{display:block;font-style:normal;font-family:var(--en);font-size:11.5px;color:var(--ink-3);margin-top:8px}
+.card .ic{background:var(--paper-2);display:grid;place-items:center}
+.card .ic i{width:36px;height:36px;border:6px solid var(--accent);border-radius:50%}
+
+.tip{display:flex;gap:16px;align-items:flex-start;background:var(--paper-2);padding:20px 22px;margin:28px 0;font-size:14.5px;line-height:1.85}
+.tip i{flex:none;width:18px;height:18px;border:4px solid var(--accent);border-radius:50%;margin-top:4px}
+.tip b{display:block;font-size:15.5px}
+.tip span{color:var(--ink-2)}
+
+.report{border:1px solid var(--ink);padding:24px 24px 18px;margin:32px 0}
+.report .rh{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3);border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px}
+.report .rh b{color:var(--ink);font-size:14px}
+.report ul{list-style:none;margin:0;padding:0}
+.report li{display:flex;gap:12px;align-items:baseline;padding:6px 0;font-size:14.5px;line-height:1.7}
+.report li i{flex:none;width:11px;height:11px;border:3px solid var(--accent);border-radius:50%}
+.report .note{font-size:12px;color:var(--ink-3);margin-top:8px}
+
+pre.code{position:relative;margin:24px 0 32px;background:var(--ink);color:#f2f2f2;padding:44px 22px 22px;font-size:13.5px;line-height:1.9;white-space:pre-wrap;word-break:break-word;font-family:var(--en),"Noto Sans JP",monospace}
+.cp{position:absolute;top:10px;right:10px;font:700 12px "Noto Sans JP",sans-serif;padding:5px 12px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#f2f2f2;border-radius:999px;cursor:pointer}
+.cp:hover{background:rgba(255,255,255,.12)}
+.pr{margin:40px 0 0}
+.pr h3{font-size:18px;margin:0 0 4px}
+.pr p{font-size:14px;color:var(--ink-2);margin:0 !important}
+.pr pre.code{margin-top:14px;padding-top:44px}
+pre.code .c{color:var(--ink-3)}
+
+.ba{border-top:2px solid var(--ink);margin:32px 0}
+.ba-head{display:grid;grid-template-columns:1fr 92px 120px;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:11.5px;font-weight:700;color:var(--ink-3);text-align:right}
+.ba-row{display:grid;grid-template-columns:1fr 92px 120px;gap:12px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
+.ba-row b{font-size:16px;line-height:1.5;display:block}
+.ba-row em{font-style:normal;font-family:var(--en);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--ink-3)}
+.ba-row .bf{font-family:var(--en);font-weight:700;font-size:20px;color:var(--ink-3);text-align:right;text-decoration:line-through}
+.ba-row .af{font-family:var(--en);font-weight:900;font-size:34px;color:var(--accent);text-align:right;line-height:1}
+.ba-row.total b{font-size:18px}
+.ba-row.total .bf{font-size:24px}
+.ba-row.total .af{font-size:44px}
+.ba-row small{font-size:.5em;margin-left:1px}
+.fine{font-size:12px;color:var(--ink-3)}
+
+.keep{list-style:none;margin:24px 0;padding:0;border-top:2px solid var(--ink)}
+.keep li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:18px 0;border-bottom:1px solid var(--line);font-size:15px;line-height:1.85}
+.keep .k{font-family:var(--en);font-weight:900;font-size:24px;color:var(--accent);line-height:1.3}
+.keep b{display:block}
+.keep span{color:var(--ink-2)}
+
+.tools{border-top:2px solid var(--ink);margin:20px 0 8px}
+.tl-row{display:grid;grid-template-columns:1fr auto;gap:8px 20px;padding:22px 0;border-bottom:1px solid var(--line)}
+.tl-row .nm{font-size:17px;font-weight:900;line-height:1.5}
+.tl-row .nm small{display:block;font-family:var(--en);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--ink-3)}
+.tl-row p{grid-column:1 / -1;margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.85}
+.tl-row a{font-size:13.5px;font-weight:700;text-decoration:none;white-space:nowrap;align-self:center}
+.tag{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:0 8px;margin-left:8px;vertical-align:2px}
+.subhead{font-size:13px;font-weight:700;color:var(--ink-3);margin:40px 0 0 !important}
+
+.author{display:flex;gap:16px;align-items:center;margin:88px 0 0;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:14px;color:var(--ink-2)}
+.author i{flex:none;width:48px;height:48px;border:6px solid var(--accent);border-radius:50%}
+
+.data{padding:96px 0 72px;border-top:1px solid var(--line);margin-top:96px}
+.data h3{font-family:var(--en);font-size:12px;letter-spacing:.2em;color:var(--ink-3);margin:0 0 28px;font-weight:700}
+.dgrid{display:grid;grid-template-columns:repeat(5,1fr);border-top:2px solid var(--ink)}
+@media (max-width:900px){.dgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.dgrid{grid-template-columns:1fr}}
+.dcell{padding:24px 18px 24px 0}
+.dcell+.dcell{padding-left:18px;border-left:1px solid var(--line)}
+@media (max-width:900px){.dcell{border-bottom:1px solid var(--line)}.dcell:nth-child(odd){padding-left:0;border-left:0}}
+@media (max-width:520px){.dcell{padding-left:0!important;border-left:0!important}}
+.dnum{font-family:var(--en);font-weight:900;font-size:clamp(28px,3.4vw,44px);line-height:1.05;letter-spacing:-.03em;white-space:nowrap}
+.dnum small{font-size:.42em;margin-left:2px;letter-spacing:0}
+.dcell p{font-size:13px;margin:10px 0 8px;line-height:1.75}
+.dcell cite{font-style:normal;font-size:11px;color:var(--ink-3);line-height:1.6;display:block}
+
+footer{padding:32px 0 48px;font-size:12px;color:var(--ink-3);border-top:1px solid var(--line)}
+
+.blur{position:relative;filter:blur(7px);user-select:none;pointer-events:none;opacity:.7;max-height:340px;overflow:hidden}
+.blur .fake-code{height:80px;background:var(--ink);margin:16px 0}
+.gate{position:relative;margin:-120px 0 0;padding:160px 0 0;background:linear-gradient(rgba(255,255,255,0),var(--paper) 120px);text-align:left}
+.gate-badge{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--accent);border-radius:999px;padding:3px 14px}
+.gate h2{font-size:clamp(26px,3.8vw,38px);line-height:1.45;font-weight:900;margin:16px 0 20px}
+.gate p{margin:0 0 20px !important}
+.gate ul{list-style:none;padding:0;margin:0 0 32px;border-top:2px solid var(--ink)}
+.gate li{padding:14px 0 14px 30px;border-bottom:1px solid var(--line);position:relative;font-weight:700}
+.gate li::before{content:"";position:absolute;left:0;top:21px;width:14px;height:14px;border:4px solid var(--accent);border-radius:50%}
+.gate-btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:900;font-size:17px;padding:18px 40px;border-radius:999px}
+.gate-btn:hover{opacity:.88}
+.gate small{display:block;margin-top:12px;font-size:12px;color:var(--ink-3)}
+.toc a.lock{color:var(--ink-3)!important;cursor:default}
+.toc a.lock em{display:block;font-style:normal;font-size:11px;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header class="hd"><div class="wrap"><div class="logo"><i></i>採用とAIのはなし</div></div></header>
+
+<div class="top">
+  <div class="wrap">
+    <span class="cat">体験談</span>
+    <h1>Claude Codeで採用を<br>自動化しまくった結果、<br>就活生と共通の友人がいると<br>判明し<span class="ac">激アツ</span>すぎた話。</h1>
+    <p class="subt">AIなんて無理だと思ってた採用担当の、100日間の記録</p>
+    <div class="meta"><span class="en">2026.10.02</span><span>読了 約8分</span><span>Claude Code ／ Genspark Speakly ほか</span></div>
+    <div class="track" aria-hidden="true">
+      <div class="pt" style="left:0"><i></i><b>DAY 0</b></div>
+      <div class="pt" style="left:14%"><i></i><b>14</b></div>
+      <div class="pt" style="left:30%"><i></i><b>30</b></div>
+      <div class="pt" style="left:45%"><i></i><b>45</b></div>
+      <div class="pt" style="left:60%"><i></i><b>60</b></div>
+      <div class="pt" style="left:80%"><i></i><b>80</b></div>
+      <div class="pt end" style="left:100%"><i></i><b>DAY 100</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="article">
+  <div class="wrap two">
+
+    <nav class="toc" aria-label="目次">
+      <p>CONTENTS</p>
+      <ol>
+        <li><a href="#d0"><b>起 ｜ DAY 0</b>正直、無理だと思ってた</a></li>
+        <li><a class="lock"><b>承 ｜ DAY 1</b>え、30秒で終わった…？<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>承 ｜ DAY 14</b>面接メモ、もう打ってません<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>承 ｜ DAY 30</b>スカウトの返信が変わった<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>転 ｜ DAY 45</b>で、一回やらかしました<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>転 ｜ DAY 60</b>頼むのすら、やめてみた<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>転 ｜ DAY 80</b>もう、AIのまま送ってます<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>結 ｜ DAY 100</b>余裕ができたら、激アツなことが起きた<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>PROMPTS</b>実際のプロンプト、ぜんぶ<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>TOOLS</b>ほんとにおすすめなやつ<em>LINEで公開</em></a></li>
+        <li><a class="lock"><b>END</b>100日前の私へ<em>LINEで公開</em></a></li>
+      </ol>
+    </nav>
+
+    <article class="post">
+      <p class="lead">こんにちは。今日はちょっと、自慢させてください（笑）</p>
+      <p>採用の仕事って、とにかく<b>「書く」</b>が多いじゃないですか。エントリーシートのまとめ、スカウト文、求人票、面接メモ、学生さんへの連絡…。それを100日かけて少しずつAIに渡していったら、<span class="mk">朝Slackを開くと、決まった連絡はもう送られていて、私が見るべきものだけが残ってる</span>状態になりました。</p>
+      <p>で、そうやって浮いた時間のおかげで、最後に<b>めちゃくちゃ激アツなこと</b>が起きました。その話は最後に書くので、ぜひそこまで読んでください（笑）</p>
+      <p>プログラミングは一切できません。そんな私でもできたので、同じように毎日パソコンに張りついてる採用担当さんに、ぜひ読んでほしいです。</p>
+
+      <!-- 起 -->
+      <section class="chap" id="d0">
+        <div class="dayno">0<small>DAY</small><span class="ph">起</span></div>
+        <h2>正直、「AIで採用なんて無理でしょ」と思ってた。</h2>
+        <p>最初に白状しておくと、私はAIにかなり懐疑的でした。</p>
+        <p>だって採用って、人を見る仕事じゃないですか。「AIに任せたら雑になりそう」「結局ぜんぶ直すことになって、二度手間なんじゃないの？」って、本気で思ってたんです。</p>
+        <p>でも、ある週にふと自分の作業時間を数えてみたんですよね。そしたら、書類のまとめ・スカウト文・求人の更新・面接メモの清書だけで、<b>週に <span data-h="total">16</span> 時間</b>。</p>
+        <div class="pull">え、候補者と話してる時間より<br>長くない…？</div>
+        <p>これはさすがにまずいなと。「人を見る」ための時間を、「書く」に全部吸われてたんです。それで、ダメ元で試してみることにしました。</p>
+      </section>
+
+      <!-- 承 -->
+      <section class="chap" id="d1">
+        <div class="dayno">1<small>DAY</small><span class="ph">承</span></div>
+        <h2>え、30秒で終わった…？ 最初の衝撃。</h2>
+        <p>最初に試したのは、いちばん時間を食ってた<b>応募書類のまとめ</b>です。使ったのは</p>
+        <div class="blur" aria-hidden="true">
+          <p>Claude Code。パソコンの中のファイルを読んで、日本語で頼んだことをそのままやってくれるAIです。頼み方は本当にこれだけ。</p>
+          <div class="fake-code"></div>
+          <p>1件10分以上かかってたまとめが、30秒くらいで出てきました。思わず「え？」って声出ました。もちろん最初は疑って全部読み直してたんですけど、根拠が原文の引用で付いてくるので…</p>
+          <p>面接メモ、もうキーボードで打ってません。次にしんどかったのが、面接のあとのメモ。次の面接まで5分しかないのに…</p>
+        </div>
+      </section>
+
+      <section class="gate">
+        <span class="gate-badge">つづきはLINEで公開中</span>
+        <h2>この先は、LINEで読めます。</h2>
+        <p>Claude Codeに渡している<b>実際のプロンプト（コピペOK）</b>、45日目のやらかし、自分のチームの採用をやめた話、そして就活生と共通の友人が判明した<b class="ac">激アツな面接</b>まで。</p>
+        <ul>
+          <li>Day 1〜100 の全文</li>
+          <li>毎朝7時に動く指示文（そのまま使えます）</li>
+          <li>就活生と共通の友人の話</li>
+        </ul>
+        <a class="gate-btn" href="https://lsync.humanoid-inc.net/entry?tag=20261002&channel=1179c4e4-18ac-416f-a904-24802089f8b8" target="_blank" rel="noopener">LINEで続きを読む →</a>
+        <small>登録は無料です</small>
+      </section>
+    </article>
+  </div>
+</div>
+
+<section class="data">
+  <div class="wrap">
+    <h3>参考 ｜ 採用とAIをめぐる数字</h3>
+    <div class="dgrid">
+      <div class="dcell"><div class="dnum en">1.20<small>倍</small></div><p>有効求人倍率（2025年度平均）。求職者1人に対して、求人が1件以上ある状態が続いている。</p><cite>厚生労働省「一般職業紹介状況（令和8年3月分及び令和7年度分）」</cite></div>
+      <div class="dcell"><div class="dnum en">51.3<small>%</small></div><p>正社員が不足していると答えた企業の割合。7月として4年連続で半数を超えた。</p><cite>帝国データバンク「人手不足に対する企業の動向調査（2026年7月）」</cite></div>
+      <div class="dcell"><div class="dnum en">650.6<small>万円</small></div><p>1社あたりの年間の中途採用費用の平均。前年から20.9万円増えている。</p><cite>マイナビ「中途採用状況調査2025年版（2024年実績）」</cite></div>
+      <div class="dcell"><div class="dnum en">55.2<small>%</small></div><p>何らかの業務で生成AIを使っている日本企業の割合。米・独・中より低い水準。</p><cite>総務省「令和7年版 情報通信白書」</cite></div>
+      <div class="dcell"><div class="dnum en">No.1</div><p>日本企業が生成AI導入で最も多く挙げた懸念は「効果的な活用方法がわからない」。</p><cite>総務省「令和7年版 情報通信白書」</cite></div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">採用とAIのはなし ｜ 掲載の数字は各出典の公表値です。</div></footer>
+
+<script>
+/* ===== ここの数字を書き換えると、記事内の「週◯時間」がすべて変わります ===== */
+var HOURS = {
+  docs: 5,    // 応募書類を読んでまとめる
+  follow: 4,  // 面接メモの清書・フォロー連絡
+  scout: 4,   // スカウト文を書く
+  post: 3     // 求人票の更新・採用記事
+};
+/* いま（確認だけ）の時間。単位は「分」 */
+var AFTER_MIN = {
+  docs: 30,
+  follow: 30,
+  scout: 20,
+  post: 20
+};
+HOURS.total = HOURS.docs + HOURS.follow + HOURS.scout + HOURS.post;
+AFTER_MIN.total = Math.round((AFTER_MIN.docs + AFTER_MIN.follow + AFTER_MIN.scout + AFTER_MIN.post) / 6) / 10; // 時間に換算
+document.querySelectorAll('[data-h]').forEach(function(el){
+  var v = HOURS[el.getAttribute('data-h')];
+  if (v !== undefined) el.textContent = v;
+});
+document.querySelectorAll('[data-a]').forEach(function(el){
+  var v = AFTER_MIN[el.getAttribute('data-a')];
+  if (v !== undefined) el.textContent = v;
+});
+
+/* 目次の現在地 */
+var links = document.querySelectorAll('.toc a');
+if ('IntersectionObserver' in window) {
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (e.isIntersecting) {
+        links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
+      }
+    });
+  }, {rootMargin:'-30% 0px -60% 0px'});
+  document.querySelectorAll('.chap').forEach(function(s){ io.observe(s); });
+}
+
+/* プロンプトのコピー */
+document.querySelectorAll('pre.code').forEach(function(pre){
+  var b=document.createElement('button'); b.type='button'; b.className='cp'; b.textContent='コピー';
+  b.addEventListener('click',function(){
+    var c=pre.cloneNode(true); c.querySelectorAll('.cp,.c').forEach(function(x){x.remove();});
+    var t=c.textContent.trim();
+    var ok=function(){b.textContent='コピーしました';setTimeout(function(){b.textContent='コピー';},1600);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){fb(t);ok();});}else{fb(t);ok();}
+  });
+  pre.appendChild(b);
+});
+function fb(t){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(a);}
+</script>
+</body>
+</html>
