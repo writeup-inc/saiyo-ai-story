@@ -159,18 +159,15 @@ pre.code .c{color:var(--ink-3)}
 
 footer{padding:32px 0 48px;font-size:12px;color:var(--ink-3);border-top:1px solid var(--line)}
 
-.blur{position:relative;filter:blur(7px);user-select:none;pointer-events:none;opacity:.7;max-height:340px;overflow:hidden}
-.blur .fake-code{height:80px;background:var(--ink);margin:16px 0}
-.gate{position:relative;margin:-120px 0 0;padding:160px 0 0;background:linear-gradient(rgba(255,255,255,0),var(--paper) 120px);text-align:left}
-.gate-badge{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--accent);border-radius:999px;padding:3px 14px}
-.gate h2{font-size:clamp(26px,3.8vw,38px);line-height:1.45;font-weight:900;margin:16px 0 20px}
-.gate p{margin:0 0 20px !important}
-.gate ul{list-style:none;padding:0;margin:0 0 32px;border-top:2px solid var(--ink)}
-.gate li{padding:14px 0 14px 30px;border-bottom:1px solid var(--line);position:relative;font-weight:700}
-.gate li::before{content:"";position:absolute;left:0;top:21px;width:14px;height:14px;border:4px solid var(--accent);border-radius:50%}
-.gate-btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:900;font-size:17px;padding:18px 40px;border-radius:999px}
-.gate-btn:hover{opacity:.88}
-.gate small{display:block;margin-top:12px;font-size:12px;color:var(--ink-3)}
+
+.locked{position:relative;margin-top:-1.5em}
+.blur{filter:blur(6px);user-select:none;pointer-events:none;opacity:.6;max-height:420px;overflow:hidden}
+.blur .fake-code{height:90px;background:var(--ink);margin:16px 0}
+.gate-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(420px,92%);background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:28px 24px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.08)}
+.gate-card .gt{font-weight:900;font-size:17px;margin:0 0 18px !important}
+.line-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#06c755;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 20px;border-radius:999px}
+.line-btn:hover{opacity:.9}
+.line-ic{font-family:var(--en);font-weight:900;font-size:11px;background:#fff;color:#06c755;border-radius:6px;padding:2px 6px;letter-spacing:.02em}
 .toc a.lock{color:var(--ink-3)!important;cursor:default}
 .toc a.lock em{display:block;font-style:normal;font-size:11px;color:var(--accent)}
 </style>
@@ -239,25 +236,19 @@ footer{padding:32px 0 48px;font-size:12px;color:var(--ink-3);border-top:1px soli
         <div class="dayno">1<small>DAY</small><span class="ph">承</span></div>
         <h2>え、30秒で終わった…？ 最初の衝撃。</h2>
         <p>最初に試したのは、いちばん時間を食ってた<b>応募書類のまとめ</b>です。使ったのは</p>
-        <div class="blur" aria-hidden="true">
-          <p>Claude Code。パソコンの中のファイルを読んで、日本語で頼んだことをそのままやってくれるAIです。頼み方は本当にこれだけ。</p>
-          <div class="fake-code"></div>
-          <p>1件10分以上かかってたまとめが、30秒くらいで出てきました。思わず「え？」って声出ました。もちろん最初は疑って全部読み直してたんですけど、根拠が原文の引用で付いてくるので…</p>
-          <p>面接メモ、もうキーボードで打ってません。次にしんどかったのが、面接のあとのメモ。次の面接まで5分しかないのに…</p>
+        <div class="locked">
+          <div class="blur" aria-hidden="true">
+            <p>Claude Code。パソコンの中のファイルを読んで、日本語で頼んだことをそのままやってくれるAIです。頼み方は本当にこれだけ。</p>
+            <div class="fake-code"></div>
+            <p>1件10分以上かかってたまとめが、30秒くらいで出てきました。思わず「え？」って声出ました。もちろん最初は疑って全部読み直してたんですけど、根拠が原文の引用で付いてくるので…</p>
+            <p>面接メモ、もうキーボードで打ってません。次にしんどかったのが、面接のあとのメモ。次の面接まで5分しかないのに…</p>
+            <p>調子に乗ってきたので（笑）、スカウト文もお願いしてみました。候補者のプロフィールを渡して…</p>
+          </div>
+          <div class="gate-card">
+            <p class="gt">つづきはLINEで公開しています</p>
+            <a class="line-btn" href="https://lsync.humanoid-inc.net/entry?tag=20261002&channel=1179c4e4-18ac-416f-a904-24802089f8b8" target="_blank" rel="noopener"><span class="line-ic">LINE</span>友だち追加して続きを読む</a>
+          </div>
         </div>
-      </section>
-
-      <section class="gate">
-        <span class="gate-badge">つづきはLINEで公開中</span>
-        <h2>この先は、LINEで読めます。</h2>
-        <p>Claude Codeに渡している<b>実際のプロンプト（コピペOK）</b>、45日目のやらかし、自分のチームの採用をやめた話、そして就活生と共通の友人が判明した<b class="ac">激アツな面接</b>まで。</p>
-        <ul>
-          <li>Day 1〜100 の全文</li>
-          <li>毎朝7時に動く指示文（そのまま使えます）</li>
-          <li>就活生と共通の友人の話</li>
-        </ul>
-        <a class="gate-btn" href="https://lsync.humanoid-inc.net/entry?tag=20261002&channel=1179c4e4-18ac-416f-a904-24802089f8b8" target="_blank" rel="noopener">LINEで続きを読む →</a>
-        <small>登録は無料です</small>
       </section>
     </article>
   </div>
